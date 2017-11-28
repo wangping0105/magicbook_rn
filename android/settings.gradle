@@ -1,0 +1,3 @@
+rootProject.name = 'magic_book_rn'
+
+include ':app'
