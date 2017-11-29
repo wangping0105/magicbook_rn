@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {View} from 'react-native'
 import {StackNavigator, TabNavigator} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons'; 
 import HomeIndex from '../components/home/index'
@@ -12,7 +13,11 @@ const MainPage = TabNavigator({
 	        navigationOptions: {
 	            tabBarLabel: '首页',
 	            tabBarIcon: ({focused}) => {
-	                return(<Icon name={focused ? 'ios-home' : 'ios-home-outline'} />)
+	                return(
+                         <View>
+                         <Icon size={30} name={focused ? 'ios-home' : 'ios-home-outline'} />
+                         </View>
+                         )
 	            }
 	        }
 	    },
@@ -21,7 +26,11 @@ const MainPage = TabNavigator({
 	        navigationOptions: {
 	            tabBarLabel: '我的',
 	            tabBarIcon: ({focused}) => {
-	                return(<Icon name={focused ? 'ios-contact' : 'ios-contact-outline'} />)
+	                return(
+                        <View>
+                            <Icon size={30} name={focused ? 'ios-contact' : 'ios-contact-outline'} />
+                        </View>
+                         )
 	            }
 	        }
 	    }

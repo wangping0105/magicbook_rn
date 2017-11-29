@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {TouchableOpacity, StyleSheet, View, Text, ListView} from 'react-native'
+import {TouchableOpacity, StyleSheet, View, Text, ListView, FlatList, ActivityIndicator} from 'react-native'
 import {PullList} from 'react-native-pullview'
 import Utils from '../../helpers/utils'
 
@@ -18,17 +18,20 @@ class BookShow extends Component {
         this.state = {
             id: params.id,
             title: params.title,
-            chapters: ds.cloneWithRows([]),
+            book: {
+                introduction: ""
+            },
+            chapters: [],
+            loading: false,
             token: "",
             page: 1,
             per_page: 10,
-            total_page: 1
+            total_page: 0
         };
         this.renderHeader = this.renderHeader.bind(this);
         this.renderRow = this.renderRow.bind(this);
-        // this.renderFooter = this.renderFooter.bind(this);
+        this.renderFooter = this.renderFooter.bind(this);
         this.loadMore = this.loadMore.bind(this);
-        this.topIndicatorRender = this.topIndicatorRender.bind(this);
     };
 
     componentDidMount() {
@@ -46,22 +49,36 @@ class BookShow extends Component {
 
 
     render () {
+        data = this.state.chapters
         return (
             <View>
-                <PullList
-                    style={{}}
-                    onPullRelease={this.onPullRelease}
-                    topIndicatorRender={this.topIndicatorRender}
-                    topIndicatorHeight={60}
-                    renderHeader={this.renderHeader}
-                    pageSize={5}
-                    initialListSize={5}
-                    onEndReached={this.loadMore}
-                    onEndReachedThreshold={60}
-                    // renderFooter={this.renderFooter}
-                    dataSource={this.state.chapters}
-                    renderRow={this.renderRow}
-                    enableEmptySections={true}/>
+                <FlatList
+                    ref={(flatList)=>this._flatList = flatList}
+                    ListHeaderComponent={this.renderHeader}
+                    // ListFooterComponent={this.renderFooter}
+                    // ItemSeparatorComponent={this._separator}
+                    renderItem={this.renderRow}
+
+                    //numColumns ={3}
+                    //columnWrapperStyle={{borderWidth:2,borderColor:'black',paddingLeft:20}}
+
+                    //horizontal={true}
+
+                    //getItemLayout={(data,index)=>(
+                    //{length: ITEM_HEIGHT, offset: (ITEM_HEIGHT+2) * index, index}
+                    //)}
+
+                    onEndReachedThreshold={5}
+                    onEndReached={(info)=>{
+                        this.loadMore();
+                        // console.warn(info.distanceFromEnd);
+                    }}
+
+                    //onViewableItemsChanged={(info)=>{
+                    //console.warn(info);
+                    //}}
+                    data={data}>
+                </FlatList>
 
             </View>
         )
@@ -74,94 +91,81 @@ class BookShow extends Component {
         }, 3000);
     }
 
-    topIndicatorRender(pulling, pullok, pullrelease) {
-        const hide = {position: 'absolute', left: -10000};
-        const show = {position: 'relative', left: 0};
-        setTimeout(() => {
-            if (pulling) {
-                this.txtPulling && this.txtPulling.setNativeProps({style: show});
-                this.txtPullok && this.txtPullok.setNativeProps({style: hide});
-                this.txtPullrelease && this.txtPullrelease.setNativeProps({style: hide});
-            } else if (pullok) {
-                this.txtPulling && this.txtPulling.setNativeProps({style: hide});
-                this.txtPullok && this.txtPullok.setNativeProps({style: show});
-                this.txtPullrelease && this.txtPullrelease.setNativeProps({style: hide});
-            } else if (pullrelease) {
-                this.txtPulling && this.txtPulling.setNativeProps({style: hide});
-                this.txtPullok && this.txtPullok.setNativeProps({style: hide});
-                this.txtPullrelease && this.txtPullrelease.setNativeProps({style: show});
-            }
-        }, 1);
-        return (
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 60}}>
-                <ActivityIndicator size="small" color="gray" />
-                <Text ref={(c) => {this.txtPulling = c;}}>当前PullList状态: pulling...</Text>
-                <Text ref={(c) => {this.txtPullok = c;}}>当前PullList状态: pullok......</Text>
-                <Text ref={(c) => {this.txtPullrelease = c;}}>当前PullList状态: pullrelease......</Text>
-            </View>
-        );
-    }
-
     renderHeader() {
         return (
             <View style={{height: 50, backgroundColor: '#eeeeee', alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={{fontWeight: 'bold'}}>This is header</Text>
+                <Text style={{fontWeight: 'bold'}}>{this.state.book.introduction.substring(0,52)}</Text>
             </View>
         );
     }
 
-    renderRow(rowData){
+    renderRow(item){
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
-                onPress={()=>{this._onPressButton(rowData.id, rowData.title)}} >
+                onPress={()=>{this._onPressButton(item.item.id, item.item.title)}} >
 
-                <View style={styles.row} id={rowData.id}>
+                <View style={styles.row} id={item.item.id}>
                     <Text style={styles.chapter_title} >
-                        {" " + rowData.title}
+                        {" " + item.item.title}
                     </Text>
                 </View>
             </TouchableOpacity>
         );
     }
 
-    // renderFooter() {
-    //     if(this.state.nomore) {
-    //         return null;
-    //     }
-    //     return (
-    //         <View style={{height: 100}}>
-    //             <ActivityIndicator />
-    //         </View>
-    //     );
-    // }
+    renderFooter() {
+        if(this.state.loading) {
+            return null;
+        }
+        return (
+            <View style={{height: 100}}>
+                <ActivityIndicator />
+            </View>
+        );
+    }
 
     loadMore() {
-        var page = this.state.page;
+        if(this.state.total_page == 0) {
+            return null;
+        }
+
+        var page = parseInt(this.state.page);
         var total_page = this.state.total_page;
-        if(page == total_page){
+        console.log("total_page " + total_page + ' page'+ page)
+        if(page <= total_page){
             page = page + 1;
             var query = {
                 page: page,
                 per_page: this.state.per_page
             }
-            this.fetch_chapter(query)
+            if(!this.state.loading){
+                this.fetch_chapter(query)
+                this.setState({loading: true})
+            }
+        }else{
+            console.log("no more!!!")
         }
     }
 
     fetch_chapter(query){
         Utils.parse_params(query);
         console.log("http://47.91.157.26/api/v1/books/"+ this.state.id + Utils.parse_params(query))
+        var _that = this;
         fetch("http://47.91.157.26/api/v1/books/"+ this.state.id + Utils.parse_params(query))
             .then((response) => response.json())
             .then((responseJson) => {
-                var total_page = (responseJson.data.total_count / responseJson.data.perpage) + 1;
-                this.setState({
+                var total_page = Math.floor(responseJson.data.total_count / responseJson.data.per_page) + 1;
+                _that.setState({
                     book: responseJson.data.book,
-                    chapters : this.state.chapters.cloneWithRows(responseJson.data.book_chapters),
+                    chapters : _that.state.chapters.concat(responseJson.data.book_chapters),
                     total_page: total_page,
-                    page: responseJson.data.page
+                    per_page: responseJson.data.per_page,
+                    page: responseJson.data.page,
+                    loading: false
                 })
+
+                var sss;
             })
             .catch((error) => {
                 console.error(error);
