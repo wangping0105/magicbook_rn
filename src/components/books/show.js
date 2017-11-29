@@ -46,13 +46,16 @@ class BookShow extends Component {
         }})
     }
 
-
+    keyExtractor = (item: any, index: number) => {
+        return index
+    };
 
     render () {
         data = this.state.chapters
         return (
             <View>
                 <FlatList
+                    keyExtractor={this.keyExtractor}
                     ref={(flatList)=>this._flatList = flatList}
                     ListHeaderComponent={this.renderHeader}
                     // ListFooterComponent={this.renderFooter}
@@ -68,7 +71,7 @@ class BookShow extends Component {
                     //{length: ITEM_HEIGHT, offset: (ITEM_HEIGHT+2) * index, index}
                     //)}
 
-                    onEndReachedThreshold={5}
+                    onEndReachedThreshold={0.1}
                     onEndReached={(info)=>{
                         this.loadMore();
                         // console.warn(info.distanceFromEnd);
@@ -93,8 +96,8 @@ class BookShow extends Component {
 
     renderHeader() {
         return (
-            <View style={{height: 50, backgroundColor: '#eeeeee', alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={{fontWeight: 'bold'}}>{this.state.book.introduction.substring(0,52)}</Text>
+            <View style={{height: 50}}>
+                <Text style={{padding: 5, fontSize: 12}} numberOfLines={3}>{"简介：" + this.state.book.introduction.replace("\n", "")}</Text>
             </View>
         );
     }
@@ -177,8 +180,10 @@ class BookShow extends Component {
 const styles =StyleSheet.create({
     row: {
         justifyContent: 'center',
-        marginTop: 10,
-        backgroundColor: '#e9f7fd'
+        backgroundColor: '#e9f7fd',
+        borderStyle: 'solid',
+        borderBottomWidth: 0.5,
+        borderBottomColor: 'grey',
     },
     book_title: {
         padding: 5,

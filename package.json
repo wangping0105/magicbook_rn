@@ -11,6 +11,7 @@
 		"react": "16.0.0",
 		"react-native": "0.50.3",
 		"react-native-pullview": "^1.0.7",
+		"react-native-refresh-list-view": "^1.0.5",
 		"react-native-vector-icons": "^4.4.2",
 		"react-navigation": "^1.0.0-beta.21"
 	},
