@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View} from 'react-native'
+import {View, Button} from 'react-native'
 import {StackNavigator, TabNavigator} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons'; 
 import HomeIndex from '../components/home/index'
@@ -18,7 +18,7 @@ const MainPage = TabNavigator({
                          <Icon size={30} name={focused ? 'ios-home' : 'ios-home-outline'} />
                          </View>
                          )
-	            }
+	            },
 	        }
 	    },
 	    personal: {
