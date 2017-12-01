@@ -8,7 +8,7 @@ class BookChapterShow extends Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params;
 
-        return { title: params.title }
+        return { title: params.book.title }
     };
 
     constructor(props) {
@@ -31,7 +31,11 @@ class BookChapterShow extends Component {
     };
 
     componentDidMount() {
-        fetch("http://47.91.157.26/api/v1/books/"+this.state.book.id+"/chapters/"+ this.state.id)
+        this.fetch_data(this.state.id)
+    };
+
+    fetch_data(chapter_id){
+        fetch("http://47.91.157.26/api/v1/books/"+this.state.book.id+"/chapters/"+ chapter_id)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -44,25 +48,25 @@ class BookChapterShow extends Component {
             .catch((error) => {
                 console.error(error);
             });
-    };
-
+    }
 
     render () {
         return (
             <View >
                 <View style={{height: (ScreenHeight - 100)}}>
+                    <Text style={styles.chapter_title}>{this.state.title}</Text>
                     <WebView source={{html: this.state.content}}/>
                 </View>
                 <View style={{height: 50}}>
                     <TouchableOpacity style={{height: 50}} activeOpacity={0.5}>
                         <View style={styles.page_view}>
-                            <Text style={styles.chapter_title} onPress={()=>{this._onPressButton(this.state.prev_chapter )}}>
+                            <Text style={styles.chapter_page} onPress={()=>{this._onPressButton(this.state.prev_chapter )}}>
                                 {'上一章'}
                             </Text>
-                            <Text style={styles.chapter_title} onPress={()=>{this.goHome()}}>
+                            <Text style={styles.chapter_page} onPress={()=>{this.goHome()}}>
                                 {'首页'}
                             </Text>
-                            <Text style={styles.chapter_title} onPress={()=>{this._onPressButton(this.state.next_chapter )}}>
+                            <Text style={styles.chapter_page} onPress={()=>{this._onPressButton(this.state.next_chapter )}}>
                                 {'下一章'}
                             </Text>
                         </View>
@@ -73,13 +77,12 @@ class BookChapterShow extends Component {
     }
 
     _onPressButton(chapter){
-        const { navigate } = this.props.navigation;
         console.log(chapter);
         if(chapter.id != null){
-            navigate("books/chapters/show", {id: chapter.id, title: chapter.title, book: {
-                id: this.state.book.id,
-                title: this.state.book.title
-            }})
+            this.fetch_data(chapter.id);
+            this.setState({
+                title: chapter.title
+            })
         }
     }
 
@@ -100,6 +103,15 @@ const styles =StyleSheet.create({
         backgroundColor: '#F5FCFF'
     },
     chapter_title: {
-        padding: 5
+        textAlign:'center',
+        fontSize: 18,
+        backgroundColor: 'white',
+        padding: 5,
+        fontWeight: 'bold'
+    },
+    chapter_page: {
+        padding: 5,
+        textAlign:'center',
+        flex: 1
     }
 });

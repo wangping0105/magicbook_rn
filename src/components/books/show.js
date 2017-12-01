@@ -13,7 +13,6 @@ class BookShow extends Component {
     constructor(props) {
         super(props);
         const params = this.props.navigation.state.params;
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
         this.state = {
             id: params.id,
@@ -85,13 +84,6 @@ class BookShow extends Component {
 
             </View>
         )
-    }
-
-    onPullRelease(resolve) {
-        //do something
-        setTimeout(() => {
-            resolve();
-        }, 3000);
     }
 
     renderHeader() {
@@ -167,8 +159,6 @@ class BookShow extends Component {
                     page: responseJson.data.page,
                     loading: false
                 })
-
-                var sss;
             })
             .catch((error) => {
                 console.error(error);
