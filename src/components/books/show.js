@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {TouchableOpacity, StyleSheet, View, Text, ListView, FlatList, ActivityIndicator} from 'react-native'
 import {PullList} from 'react-native-pullview'
-import Utils from '../../helpers/utils'
+import {parse_params} from '../../helpers/utils'
 
 class BookShow extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -144,10 +144,9 @@ class BookShow extends Component {
     }
 
     fetch_chapter(query){
-        Utils.parse_params(query);
-        console.log("http://47.91.157.26/api/v1/books/"+ this.state.id + Utils.parse_params(query))
+        console.log("http://47.91.157.26/api/v1/books/"+ this.state.id + parse_params(query))
         var _that = this;
-        fetch("http://47.91.157.26/api/v1/books/"+ this.state.id + Utils.parse_params(query))
+        fetch("http://47.91.157.26/api/v1/books/"+ this.state.id + parse_params(query))
             .then((response) => response.json())
             .then((responseJson) => {
                 var total_page = Math.floor(responseJson.data.total_count / responseJson.data.per_page) + 1;

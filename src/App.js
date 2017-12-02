@@ -51,7 +51,9 @@ class AppInitialize extends Component {
     }
 
     render () {
-        if (this.props.current_user.attrs.status != 'logged_in'){
+        console.log("App.js ==:");
+        console.log(this.props);
+        if (this.props.current_user.attrs.user_token == null){
             return (<LoginView />)
         } else {
             return (<Navgation />)

@@ -2,11 +2,10 @@ import React, {Component} from 'react'
 import {TouchableOpacity, StyleSheet, View, Text, Platform, Alert} from 'react-native'
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 import {StackNavigator, TabNavigator} from 'react-navigation';
-import Utils from '../../helpers/utils'
+import {parse_params} from '../../helpers/utils'
 
 
 class HomeIndex extends Component {
-    static login_url = "http://magicbooks.cn" + "/api/v1/auth/login";
     static navigationOptions = ({ navigation }) => {
         return {
             title: '首页'
@@ -34,20 +33,6 @@ class HomeIndex extends Component {
     }
 
     componentDidMount() {
-        // fetch(login_url, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/x-www-form-urlencoded',
-        //     },
-        //     body: 'phone=15921076830&password=111111'
-        // })
-        //     .then((response) => response.json())
-        //     .then((responseJson) => {
-        //         this.state.token = responseJson.data.user_token;
-        //     })
-        //     .catch((error) => {
-        //         console.error(error);
-        //     });
         this.fetch_data({})
     }
 
@@ -138,9 +123,8 @@ class HomeIndex extends Component {
     }
 
     fetch_data(query){
-        Utils.parse_params(query);
         var _that = this;
-        fetch("http://47.91.157.26/api/v1/home" + Utils.parse_params(query))
+        fetch("http://47.91.157.26/api/v1/home" + parse_params(query))
         // fetch("http://magicbooks.cn/api/v1/home")
             .then((response) => response.json())
             .then((responseJson) => {

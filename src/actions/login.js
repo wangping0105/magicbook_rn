@@ -13,7 +13,7 @@ import {AuthLoginApi} from '../config/api'
 export const localLogin = () => {
     return dispatch => {
         storage.load({
-            key: 'user'
+            key: 'currentUser'
         }).then(user => {
             dispatch(loginSuccess(user))
         }).catch(err => {
@@ -28,7 +28,7 @@ export const login = (username, password) => {
         dispatch({type: types.LOGINING});
         AuthLoginApi(username, password).then((data) => {
             if (data.code == 0) {
-                dispatch(loginSuccess(data))
+                dispatch(loginSuccess(data.data))
             } else {
                 Toast.show(data.message);
                 dispatch(loginFailed());
@@ -43,7 +43,7 @@ export const login = (username, password) => {
 
 export const logout = () => {
     storage.remove({
-        key: 'user'
+        key: 'currentUser'
     });
     return {type: types.LOGOUT}
 };
@@ -51,10 +51,10 @@ export const logout = () => {
 //登录成功
 export const loginSuccess = (user) => {
     storage.save({
-        key: 'user',
+        key: 'currentUser',
         data: user
-    })
-    Toast.show('登录成功')
+    });
+    Toast.show('登录成功');
     return {type: types.LOGIN_SUCCESS, user: user}
 };
 
