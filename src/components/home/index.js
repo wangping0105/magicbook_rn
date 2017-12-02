@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {TouchableOpacity, StyleSheet, View, Text, Platform, Alert} from 'react-native'
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 import {StackNavigator, TabNavigator} from 'react-navigation';
-import {parse_params} from '../../helpers/utils'
+import {HomeApi} from '../../config/api'
 
 
 class HomeIndex extends Component {
@@ -123,11 +123,7 @@ class HomeIndex extends Component {
     }
 
     fetch_data(query){
-        var _that = this;
-        fetch("http://47.91.157.26/api/v1/home" + parse_params(query))
-        // fetch("http://magicbooks.cn/api/v1/home")
-            .then((response) => response.json())
-            .then((responseJson) => {
+        HomeApi(query).then((responseJson) => {
                 var total_page = Math.floor(responseJson.data.total_count / responseJson.data.per_page) + 1;
 
                 this.setState({

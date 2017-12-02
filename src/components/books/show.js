@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {TouchableOpacity, StyleSheet, View, Text, ListView, FlatList, ActivityIndicator} from 'react-native'
 import {PullList} from 'react-native-pullview'
-import {parse_params} from '../../helpers/utils'
+import {BooksShowApi} from '../../config/api'
 
 class BookShow extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -50,38 +50,21 @@ class BookShow extends Component {
     };
 
     render () {
-        data = this.state.chapters
+        var data = this.state.chapters
         return (
             <View>
                 <FlatList
+                    data={data}
                     keyExtractor={this.keyExtractor}
                     ref={(flatList)=>this._flatList = flatList}
                     ListHeaderComponent={this.renderHeader}
-                    // ListFooterComponent={this.renderFooter}
-                    // ItemSeparatorComponent={this._separator}
                     renderItem={this.renderRow}
-
-                    //numColumns ={3}
-                    //columnWrapperStyle={{borderWidth:2,borderColor:'black',paddingLeft:20}}
-
-                    //horizontal={true}
-
-                    //getItemLayout={(data,index)=>(
-                    //{length: ITEM_HEIGHT, offset: (ITEM_HEIGHT+2) * index, index}
-                    //)}
-
                     onEndReachedThreshold={0.1}
                     onEndReached={(info)=>{
                         this.loadMore();
                         // console.warn(info.distanceFromEnd);
                     }}
-
-                    //onViewableItemsChanged={(info)=>{
-                    //console.warn(info);
-                    //}}
-                    data={data}>
-                </FlatList>
-
+                />
             </View>
         )
     }
@@ -144,24 +127,22 @@ class BookShow extends Component {
     }
 
     fetch_chapter(query){
-        console.log("http://47.91.157.26/api/v1/books/"+ this.state.id + parse_params(query))
         var _that = this;
-        fetch("http://47.91.157.26/api/v1/books/"+ this.state.id + parse_params(query))
-            .then((response) => response.json())
-            .then((responseJson) => {
-                var total_page = Math.floor(responseJson.data.total_count / responseJson.data.per_page) + 1;
-                _that.setState({
-                    book: responseJson.data.book,
-                    chapters : _that.state.chapters.concat(responseJson.data.book_chapters),
-                    total_page: total_page,
-                    per_page: responseJson.data.per_page,
-                    page: responseJson.data.page,
-                    loading: false
-                })
+        BooksShowApi(this.state.id, query).then((responseJson) => {
+            var total_page = Math.floor(responseJson.data.total_count / responseJson.data.per_page) + 1;
+
+            _that.setState({
+                book: responseJson.data.book,
+                chapters : _that.state.chapters.concat(responseJson.data.book_chapters),
+                total_page: total_page,
+                per_page: responseJson.data.per_page,
+                page: responseJson.data.page,
+                loading: false
             })
-            .catch((error) => {
-                console.error(error);
-            });
+        })
+        .catch((error) => {
+            console.error(error);
+        });
     }
 
 }

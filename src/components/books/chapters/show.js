@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
-import {WebView, TouchableOpacity,  StyleSheet, View, Text, ListView} from 'react-native'
+import {WebView, TouchableOpacity,  StyleSheet, View, Text, ListView, Button} from 'react-native'
+import {BookChaptersShowApi, BookChaptersBookMaskApi} from '../../../config/api'
+
 var Dimensions = require('Dimensions');
 var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
@@ -7,8 +9,14 @@ var ScreenHeight = Dimensions.get('window').height;
 class BookChapterShow extends Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params;
+        const { navigate } = navigation;
 
-        return { title: params.book.title }
+        return {
+            title: params.book.title,
+            headerRight: (
+                <Button  title={'首页'} onPress={() => {navigate('main_page')}}/>
+            )
+        }
     };
 
     constructor(props) {
@@ -35,8 +43,7 @@ class BookChapterShow extends Component {
     };
 
     fetch_data(chapter_id){
-        fetch("http://47.91.157.26/api/v1/books/"+this.state.book.id+"/chapters/"+ chapter_id)
-            .then((response) => response.json())
+        BookChaptersShowApi(this.state.book.id, chapter_id, {})
             .then((responseJson) => {
                 this.setState({
                     book: responseJson.data.book,
@@ -63,8 +70,8 @@ class BookChapterShow extends Component {
                             <Text style={styles.chapter_page} onPress={()=>{this._onPressButton(this.state.prev_chapter )}}>
                                 {'上一章'}
                             </Text>
-                            <Text style={styles.chapter_page} onPress={()=>{this.goHome()}}>
-                                {'首页'}
+                            <Text style={styles.chapter_page} onPress={()=>{this.addBookMark(this.state.book.id, this.state.id)}}>
+                                {'加书签'}
                             </Text>
                             <Text style={styles.chapter_page} onPress={()=>{this._onPressButton(this.state.next_chapter )}}>
                                 {'下一章'}
@@ -86,9 +93,14 @@ class BookChapterShow extends Component {
         }
     }
 
-    goHome(){
-        const { navigate } = this.props.navigation;
-        navigate('main_page')
+    addBookMark(book_id, id){
+        BookChaptersBookMaskApi(book_id, id).then((data) => {
+            if (data.code == 0) {
+                Toast.show("书签添加成功");
+            }
+        }).catch((err) => {
+            Toast.show('网络错误');
+        })
     }
 }
 

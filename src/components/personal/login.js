@@ -25,6 +25,9 @@ class LoginView extends Component {
                         {/*source={require('../../assets/images/app-icon.png')}*/}
                         {/*style={{height: 100, width: 100}}*/}
                     {/*/>*/}
+                    <Text style={{fontSize: 20}}>
+                        魔书网
+                    </Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <View style={{flex: 0.1}} />

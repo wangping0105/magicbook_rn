@@ -1239,6 +1239,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.magic-book-rn";
 				PRODUCT_NAME = magic_book_rn;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1256,6 +1257,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.magic-book-rn";
 				PRODUCT_NAME = magic_book_rn;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

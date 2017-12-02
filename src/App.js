@@ -39,7 +39,7 @@ var storage = new Storage({
 //注意，global对象相当于浏览器里面的window，不要把过于庞大的函数对象放在这里面，应该放一些小而常用的
 global.AppGlbal = {
     host: 'http://47.91.157.26'
-    // host: 'http://localhost:9000'
+    //host: 'http://localhost:9000'
 };
 global.storage = storage;
 global.Toast = Toast;
